@@ -13,8 +13,8 @@ git checkout -b <nome_da_fature>
 
 ex: git checkout -b createHeader
 
-### 03 - Commit na feature branch
-git add .
-git push --set-upstream origin featureTeste01
-git commit -m "mensagem"
-git push
+### 04 - Commit na feature branch
+1. git add .
+2. git push --set-upstream origin featureTeste01
+3. git commit -m "mensagem"
+4. git push
