@@ -12,3 +12,9 @@ npm start
 git checkout -b <nome_da_fature> 
 
 ex: git checkout -b createHeader
+
+## 03.1 Commit na feature branch
+git add .
+git push --set-upstream origin featureTeste01
+git commit -m "mensagem"
+git push
