@@ -7,3 +7,8 @@ npm install
 
 ## 02 - Rodar projeto
 npm start
+
+## 03 - Criação de uma feature branch
+git checkout -b <nome_da_fature> 
+
+ex: git checkout -b createHeader
