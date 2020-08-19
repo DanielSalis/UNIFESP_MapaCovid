@@ -18,3 +18,5 @@ ex: git checkout -b createHeader
 2. git push --set-upstream origin createHeader
 3. git commit -m "mensagem"
 4. git push
+
+### 05 - Após o commit é necessário criar um pull request
