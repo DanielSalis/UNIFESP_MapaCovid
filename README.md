@@ -15,6 +15,6 @@ ex: git checkout -b createHeader
 
 ### 04 - Commit na feature branch
 1. git add .
-2. git push --set-upstream origin featureTeste01
+2. git push --set-upstream origin createHeader
 3. git commit -m "mensagem"
 4. git push
