@@ -1,9 +1,12 @@
 import React from 'react';
-import { Container } from './style';
+import { Container, MapDiv } from './style';
 
 const MapInfo = props => {
     return (
-        <Container></Container>
+        <Container>
+            <span>Map info</span>
+            <MapDiv />
+        </Container>
     );
 }
 
