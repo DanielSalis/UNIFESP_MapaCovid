@@ -20,3 +20,5 @@ ex: git checkout -b createHeader
 4. git push
 
 ### 05 - Após o commit é necessário criar um pull request
+
+### 06 - Caso o P.R seja aprovado, é necessário excluir a branch
