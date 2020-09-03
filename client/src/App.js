@@ -13,18 +13,22 @@ import Header from './components/Header';
 import NotFound from './components/NotFound';
 import Home from './pages/Home';
 
+//Redux
+import store from './store';
+import { Provider } from 'react-redux';
+
 function App() {
   return (
     <div className="App">
-      <Router>
-        <Header />
-        <Switch>
-          <Route exact path="/" component={Home} />
-          <Route component={NotFound} />
-        </Switch>
-      </Router>
-
-
+      <Provider store={store}>
+        <Router>
+          <Header />
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route component={NotFound} />
+          </Switch>
+        </Router>
+      </Provider>
     </div>
   );
 }
