@@ -1,0 +1,27 @@
+{
+  "name": "unifesp_mapacovid",
+  "version": "1.0.0",
+  "description": "Mapa interativo que busca mostar informações de inciêncidas de casos do COVID-19 no Brasil",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server",
+    "server": "nodemon --inspect server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanielSalis/UNIFESP_MapaCovid.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DanielSalis/UNIFESP_MapaCovid/issues"
+  },
+  "homepage": "https://github.com/DanielSalis/UNIFESP_MapaCovid#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.4",
+    "pg": "^8.3.3"
+  }
+}
