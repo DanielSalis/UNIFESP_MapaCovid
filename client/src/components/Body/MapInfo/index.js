@@ -1,13 +1,13 @@
 import React from 'react';
 import { Container, MapDiv } from './style';
-import CircleMenuExample from './Map/CircleMenuExample';
+import Map from './Map';
 
 const MapInfo = props => {
     return (
         <Container>
             <span>Map info</span>
             <MapDiv>
-                <CircleMenuExample></CircleMenuExample>
+                <Map></Map>
             </MapDiv>
         </Container>
     );
