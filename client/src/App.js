@@ -1,5 +1,10 @@
 import React from 'react';
+
+//Styles
 import './App.css';
+import 'ol/ol.css';
+import 'antd/dist/antd.css';
+import './react-geo.css';
 
 //bibliotecas
 import {
