@@ -43,12 +43,15 @@ export default class Map extends React.Component {
 
     render() {
         return (
-            <div>
+            <div style={{
+                width: '100%',
+                height: '90%'
+            }}>
                 <div
                     id={this.mapDivId}
                     style={{
                         width: '100%',
-                        height: '41rem'
+                        height: '100%'
                     }}
                 />
             </div>
