@@ -8,15 +8,15 @@ export const Container = styled.div`
 `;
 
 export const LeftDiv = styled.div`
-    width:25em;
-    height:54em;
+    width:15%;
+    height:95%;
     margin: 1em;
     background-color:#fff;
 `;
 
 export const RightDiv = styled.div`
-    width:90em;
-    height:54em;
+    width:85%;
+    height:95%;
     margin:1em;
     display: flex;
     flex-direction: column;
