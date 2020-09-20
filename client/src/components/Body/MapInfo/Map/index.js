@@ -5,13 +5,11 @@ import OlView from 'ol/View';
 import OlLayerTile from 'ol/layer/Tile';
 import OlSourceOSM from 'ol/source/OSM';
 import OlSourceTileWMS from 'ol/source/TileWMS';
-import OlLayerGroup from 'ol/layer/Group';
 
 //Redux
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Actions as MapActions } from '../../../../store/ducks/_map';
-import Item from 'antd/lib/list/Item';
 
 class Map extends React.Component {
 
