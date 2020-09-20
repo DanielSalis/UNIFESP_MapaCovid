@@ -6,7 +6,7 @@ const MapInfo = props => {
     return (
         <Container>
             <span>Map info</span>
-            <Map></Map>
+            <Map props={props}></Map>
         </Container>
     );
 }

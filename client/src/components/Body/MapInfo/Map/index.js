@@ -4,18 +4,20 @@ import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 import OlLayerTile from 'ol/layer/Tile';
 import OlSourceOSM from 'ol/source/OSM';
+import OlSourceTileWMS from 'ol/source/TileWMS';
 
-export default class Map extends React.Component {
+//Redux
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { Actions as MapActions } from '../../../../store/ducks/_map';
+
+class Map extends React.Component {
 
     constructor(props) {
 
         super(props);
 
         this.mapDivId = `map-${Math.random()}`;
-
-        const osmLayer = new OlLayerTile({
-            source: new OlSourceOSM()
-        });
 
         this.map = new OlMap({
             view: new OlView({
@@ -27,7 +29,38 @@ export default class Map extends React.Component {
                 zoom: 4,
             }),
             layers: [
-                osmLayer,
+                new OlLayerTile({
+                    id: 1,
+                    name: 'OSM',
+                    source: new OlSourceOSM(),
+                    visible: true
+                }),
+                new OlLayerTile({
+                    id: 2,
+                    name: 'OSM-Overlay-WMS',
+                    minResolution: 0,
+                    maxResolution: 200,
+                    visible: false,
+                    source: new OlSourceTileWMS({
+                        url: 'https://ows.terrestris.de/osm/service',
+                        params: {
+                            'LAYERS': 'OSM-Overlay-WMS'
+                        }
+                    })
+                }),
+                new OlLayerTile({
+                    id: 3,
+                    name: 'SRTM30-Colored',
+                    minResolution: 0,
+                    maxResolution: 10,
+                    visible: false,
+                    source: new OlSourceTileWMS({
+                        url: 'https://ows.terrestris.de/osm/service',
+                        params: {
+                            'LAYERS': 'SRTM30-Colored'
+                        }
+                    })
+                })
             ],
         });
 
@@ -37,8 +70,30 @@ export default class Map extends React.Component {
         };
     }
 
-    componentDidMount() {
+    componentWillMount = async () => {
+        await this.props.MapActions.setMap(this.map);
+        // console.log(this.map.getLayers().getArray());
+
+        // const layerD = this.map.getLayers().getArray()[2];
+        // console.log(layerD);
+        // layerD.setVisible(false);
+
+        // console.log(this.map.getLayers());
         this.map.setTarget(this.mapDivId);
+    }
+
+    componentDidUpdate = async (prevProps, prevState) => {
+
+        console.log("mudou");
+        if (this.map) {
+            this.map.getLayers().getArray().forEach((item, index) => {
+                if ((item.getProperties().id === this.props.map.layers[index].id) && this.props.map.layers[index].visible === true) {
+                    item.setVisible(true);
+                } else {
+                    item.setVisible(false);
+                }
+            });
+        }
     }
 
     render() {
@@ -58,3 +113,13 @@ export default class Map extends React.Component {
         );
     }
 }
+
+const mapStateToProps = state => ({
+    map: state._map
+});
+
+const mapDispatchToProps = dispatch => ({
+    MapActions: bindActionCreators(MapActions, dispatch)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Map);

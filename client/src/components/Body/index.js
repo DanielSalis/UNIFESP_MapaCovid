@@ -1,7 +1,8 @@
 import React from 'react';
-import { Container, LeftDiv, RightDiv } from './style';
+import { Container, RightDiv } from './style';
 import FilterBar from './FilterBar';
 import MapInfo from './MapInfo';
+import LeftSidebar from './LeftSidebar';
 
 //Redux
 import { bindActionCreators } from 'redux';
@@ -11,8 +12,7 @@ import { Actions as MapActions } from '../../store/ducks/_map';
 const Body = props => {
     return (
         <Container>
-            {/* Substituir por LeftSidebar */}
-            <LeftDiv></LeftDiv>
+            <LeftSidebar />
             <RightDiv>
                 <FilterBar />
                 <MapInfo />
