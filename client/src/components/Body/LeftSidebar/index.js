@@ -18,10 +18,12 @@ const LeftSidebar = props => {
     const renderLayers = (key) => {
         const itemsToReturn = props.map.layers.map((item) => {
             if (item.id === key) {
+                props.MapActions.changeLayer(item.id, true);
                 return (
                     <SpanLayers key={item.id} onClick={(e) => handleLabelClick(e, item.id)}><SpanLayersDiv selected={true} />{item.text}</SpanLayers>
                 );
             } else {
+                props.MapActions.changeLayer(item.id, false);
                 return <SpanLayers key={item.id} onClick={(e) => handleLabelClick(e, item.id)}><SpanLayersDiv selected={false} />{item.text}</SpanLayers>
             }
         });
