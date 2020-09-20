@@ -8,6 +8,20 @@ const INITIAL_STATE = {
     country: false,
     state: null,
     city: null,
+    layers: [
+        {
+            id: 1,
+            text: "Layer 1"
+        },
+        {
+            id: 2,
+            text: "Layer 2"
+        },
+        {
+            id: 3,
+            text: "Layer 3"
+        }
+    ]
 }
 
 export default function reducer(state = INITIAL_STATE, action) {

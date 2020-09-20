@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { Container, ImgContainer, LogoContainer, SpanLayers, SpanLayersDiv } from './style';
 import { FiRadio } from 'react-icons/fi';
 
@@ -8,9 +8,29 @@ import { connect } from 'react-redux';
 import { Actions as MapActions } from '../../../store/ducks/_map';
 
 const LeftSidebar = props => {
-    const handleLabelClick = (e, element) => {
-        console.log(e.target);
-        console.log();
+    const [layers, setLayers] = useState(null);
+
+    useLayoutEffect(() => {
+        renderLayers();
+        console.log("left side bar updated")
+    }, []);
+
+    const renderLayers = (key) => {
+        const itemsToReturn = props.map.layers.map((item) => {
+            if (item.id === key) {
+                return (
+                    <SpanLayers key={item.id} onClick={(e) => handleLabelClick(e, item.id)}><SpanLayersDiv selected={true} />{item.text}</SpanLayers>
+                );
+            } else {
+                return <SpanLayers key={item.id} onClick={(e) => handleLabelClick(e, item.id)}><SpanLayersDiv selected={false} />{item.text}</SpanLayers>
+            }
+        });
+        setLayers(itemsToReturn);
+    }
+
+    const handleLabelClick = (e, key) => {
+        console.log(key);
+        renderLayers(key);
     }
 
     return (
@@ -21,9 +41,7 @@ const LeftSidebar = props => {
                 </ImgContainer>
                 <label>mapa covid</label>
             </LogoContainer>
-            <SpanLayers onClick={(e) => handleLabelClick(e)}><SpanLayersDiv selected={true} />layer 1</SpanLayers>
-            <SpanLayers onClick={(e) => handleLabelClick(e)}><SpanLayersDiv selected={false} />layer 2</SpanLayers>
-            <SpanLayers onClick={(e) => handleLabelClick(e)}><SpanLayersDiv selected={false} />layer 3</SpanLayers>
+            {layers}
         </Container>
     );
 }

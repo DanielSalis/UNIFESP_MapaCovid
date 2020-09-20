@@ -24,6 +24,7 @@ export const SpanLayersDiv = styled.div`
         width:2%;
         height:100%;
         background-color: ${props => props.selected ? "#1976D2" : "transparent"};
+        margin: 0 0.2rem 0 0;   
 `;
 
 export const LogoContainer = styled.div`
