@@ -41,6 +41,24 @@ export default function reducer(state = INITIAL_STATE, action) {
                 map: action.payload
             };
 
+        case Types.SET_COUNTRY_FILTER:
+            return {
+                ...state,
+                country: action.payload
+            }
+
+        case Types.SET_STATE_FILTER:
+            return {
+                ...state,
+                state: action.payload
+            }
+
+        case Types.SET_CITY_FILTER:
+            return {
+                ...state,
+                city: action.payload
+            }
+
         case Types.CHANGE_LAYER:
             const id = action.payload.id;
             const initialLayers = INITIAL_STATE.layers;
@@ -60,6 +78,21 @@ export default function reducer(state = INITIAL_STATE, action) {
 }
 
 export const Actions = {
+    setCountry: (data) => ({
+        type: Types.SET_COUNTRY_FILTER,
+        payload: data
+    }),
+
+    setState: (data) => ({
+        type: Types.SET_STATE_FILTER,
+        payload: data
+    }),
+
+    setCity: (data) => ({
+        type: Types.SET_CITY_FILTER,
+        payload: data
+    }),
+
     setMap: (data) => ({
         type: Types.SET_MAP,
         payload: data
