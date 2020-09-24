@@ -6,4 +6,8 @@ export const Container = styled.div`
     background-color: #fff;
     display:flex;
     flex-direction:row;
+    align-items:center;
+    h2{
+        margin:0 0 0 1%
+    }
 `;
