@@ -101,7 +101,8 @@ class Map extends React.Component {
             <div style={{
                 width: '100%',
                 height: '90%',
-                backgroundColor: "aquamarine"
+                backgroundColor: "#def3f6",
+                border: '1px solid black'
             }}>
                 <div
                     id={this.mapDivId}
