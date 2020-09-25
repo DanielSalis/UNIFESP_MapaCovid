@@ -54,3 +54,31 @@ export const UpperDiv = styled.div`
     flex-direction: row;
     align-items:center;
 `;
+
+export const UpperDivLeft = styled.div`
+    height:100%;
+    width:50%;
+    display:flex;
+    flex-direction: row;
+    align-items:center;
+`;
+
+export const UpperDivRight = styled.div`
+    height:100%;
+    width:50%;
+    display:flex;
+    flex-direction: row;
+    align-items:center;
+    justify-content:flex-end;
+
+    button{
+        margin:0 0.5rem 0 0 ;
+        background-color:#1890ff;
+        color:#fff;
+        /* border: 0.5px solid black; */
+    }
+
+    button:focus{
+        outline:none;
+    }
+`;

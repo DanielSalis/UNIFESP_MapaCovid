@@ -20,15 +20,15 @@ const INITIAL_STATE = {
         },
         {
             id: 2,
-            text: "Layer 2",
-            name: 'OSM-Overlay-WMS',
-            visible: false,
-        },
-        {
-            id: 3,
             text: "Layer 3",
             name: 'SRTM30-Contour',
             visible: false
+        },
+        {
+            id: 3,
+            text: "Layer 4",
+            name: 'Feature',
+            visible: true
         }
     ]
 }
