@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import SelectedInputs from './SelectedInput';
-import { Container, BottomDiv, Divider, UpperDiv } from './style';
+import { Container, BottomDiv, Divider, UpperDiv, UpperDivLeft, UpperDivRight } from './style';
 import api from '../../API';
 
 //Redux
@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { Actions as MapActions } from '../../../store/ducks/_map';
 
 const FilterBar = props => {
+    const [country, setCountry] = useState(props.map.country);
     const [allStates, setAllStates] = useState(null);
     const [citiesByState, setCitiesByState] = useState(null);
 
@@ -40,7 +41,16 @@ const FilterBar = props => {
     }
 
     const handleInputCheck = (e) => {
-        e.target.previousSibling.click()
+        props.MapActions.setCountry(!props.map.country);
+        setCountry(!props.map.country);
+
+        props.MapActions.setState(null);
+        props.MapActions.setCity(null);
+    }
+
+    const handleLabelCheckClick = e => {
+        e.target.previousSibling.click();
+
     }
 
     const handleDatalistChange = async (e, place) => {
@@ -55,27 +65,46 @@ const FilterBar = props => {
         }
     }
 
+    const handleApllyFiltersClick = async () => {
+        const { state, city, country } = props.map;
+        console.log(state, city, country);
+
+        const stateData = allStates.filter(item => item.nome === state);
+
+        const cityData = citiesByState.filter(item => item.nome === city);
+
+        console.log(stateData[0], cityData[0]);
+
+        alert(`Você Buscou pelo estado de ${state} e cidade ${city}. Coordenadas (${cityData[0].latitude}, ${cityData[0].longitude})`)
+
+    }
+
     return (
         <Container>
             <UpperDiv>
-                {props.map.state ? <SelectedInputs local="states" text={props.map.state} /> : <></>}
-                {props.map.city ? <SelectedInputs local="cities" text={props.map.city} /> : <></>}
+                <UpperDivLeft>
+                    {props.map.state ? <SelectedInputs local="states" text={props.map.state} /> : <></>}
+                    {props.map.city ? <SelectedInputs local="cities" text={props.map.city} /> : <></>}
+                </UpperDivLeft>
+                <UpperDivRight>
+                    <button onClick={() => handleApllyFiltersClick()}>Aplicar Filtros</button>
+                </UpperDivRight>
             </UpperDiv>
             <Divider />
             <BottomDiv>
                 <div>
-                    <input onClick={e => props.MapActions.setCountry(!props.map.country)} type="checkbox"></input>
-                    <label onClick={(e) => handleInputCheck(e)}>Brasil</label>
+                    <input onClick={e => { handleInputCheck() }} type="checkbox"></input>
+                    <label onClick={(e) => handleLabelCheckClick(e)}>Brasil</label>
                 </div>
 
-                <input onChange={(e) => handleDatalistChange(e, "states")} type="text" name="States" placeholder="Estados" list="exampleList" />
+                <input onChange={(e) => handleDatalistChange(e, "states")} disabled={country === true} type="text" name="States" placeholder="Estados" list="exampleList" />
                 <datalist style={{}} onChange={(e) => handleDatalistChange(e, "states")} id="exampleList">
-                    {allStates ? allStates.map(item => { return <option key={item.codigo_uf} value={item.nome} /> }) : null}
+                    {allStates && country === false ? allStates.map(item => { return <option key={item.codigo_uf} value={item.nome} /> }) : <option value={""} />}
                 </datalist>
 
-                <input onChange={(e) => handleDatalistChange(e, "cities")} type="text" name="Cities" placeholder="Cidades" list="dataListCidades" />
+                <input onChange={(e) => handleDatalistChange(e, "cities")} disabled={country === true || props.map.state === null} type="text" name="Cities" placeholder="Cidades" list="dataListCidades" />
                 <datalist id="dataListCidades">
-                    {citiesByState ? citiesByState.map(item => { return <option key={item.codigo_ibge} value={item.nome} /> }) : null}
+                    {citiesByState && country === false ? citiesByState.map((item, index) => { return <option key={index + Math.random()} codigo={item.codigo_ibge} value={item.nome} /> }) : null}
                 </datalist>
 
             </BottomDiv>
