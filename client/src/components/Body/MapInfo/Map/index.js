@@ -111,7 +111,7 @@ class Map extends React.Component {
             if (this.state.appliedFilters != this.props.map.appliedFilters) {
                 this.setState({ appliedFilters: this.props.map.appliedFilters });
                 const { latitude, longitude } = this.props.map.appliedFilters.city;
-                debugger;
+
                 this.map.setView(
                     new OlView({
                         center: fromLonLat([longitude, latitude], 'EPSG:4326'),

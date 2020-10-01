@@ -28,7 +28,6 @@ const FilterBar = props => {
     }, [allStates, citiesByState]);
 
     const fetchDataCities = async (state) => {
-        debugger;
         const validState = allStates.find(item => item.nome === state);
         console.log(validState);
         if (validState) {
@@ -38,7 +37,6 @@ const FilterBar = props => {
                 }
             })
                 .then(async (res) => {
-                    debugger
                     setCitiesByState(res.data);
                 })
         } else {
@@ -75,8 +73,6 @@ const FilterBar = props => {
 
         let stateData = null;
         let cityData = null;
-
-        debugger;
 
         if (!state) {
             return alert(`Pesquisa Inválida`);
