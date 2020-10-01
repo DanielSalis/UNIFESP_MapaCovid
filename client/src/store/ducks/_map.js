@@ -3,7 +3,8 @@ export const Types = {
     SET_STATE_FILTER: '_map/SET_STATE_FILTER',
     SET_CITY_FILTER: '_map/SET_CITY_FILTER',
     SET_MAP: '_map/SET_MAP',
-    CHANGE_LAYER: '_map/CHANGE_LAYER'
+    CHANGE_LAYER: '_map/CHANGE_LAYER',
+    SET_APPLIED_FILTERS: '_map/SET_APPLIED_FILTERS'
 }
 
 const INITIAL_STATE = {
@@ -23,14 +24,9 @@ const INITIAL_STATE = {
             text: "Layer 3",
             name: 'SRTM30-Contour',
             visible: false
-        },
-        {
-            id: 3,
-            text: "Layer 4",
-            name: 'Feature',
-            visible: true
         }
-    ]
+    ],
+    appliedFilters: null
 }
 
 export default function reducer(state = INITIAL_STATE, action) {
@@ -72,6 +68,12 @@ export default function reducer(state = INITIAL_STATE, action) {
                 layers: changedLayers
             };
 
+        case Types.SET_APPLIED_FILTERS:
+            return {
+                ...state,
+                appliedFilters: action.payload
+            }
+
         default:
             return state
     }
@@ -105,4 +107,9 @@ export const Actions = {
             visible: visible
         }
     }),
+
+    setAppliedFilters: (data) => ({
+        type: Types.SET_APPLIED_FILTERS,
+        payload: data
+    })
 }

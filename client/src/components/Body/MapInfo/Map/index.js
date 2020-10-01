@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import OlMap from 'ol/Map';
 import OlView from 'ol/View';
+import { fromLonLat } from 'ol/proj';
 import OlLayerTile from 'ol/layer/Tile';
 import OlLayerVector from 'ol/layer/Vector';
 import OlSourceOSM from 'ol/source/OSM';
@@ -27,27 +28,6 @@ class Map extends React.Component {
         super(props);
 
         this.mapDivId = `map-${Math.random()}`;
-
-        const featureLayer = new OlLayerVector({
-            id: 3,
-            visible: true,
-            source: new OlSourceVector({
-                features: [new OlFeature({
-                    geometry: new OlGeomPoint([
-                        0.0,
-                        0.0
-                    ])
-                })]
-            }),
-            style: new OlStyleStyle({
-                image: new OlStyleCircle({
-                    radius: 10,
-                    fill: new OlStyleFill({
-                        color: '#C62148'
-                    })
-                })
-            })
-        });
 
         this.map = new OlMap({
             view: new OlView({
@@ -77,8 +57,7 @@ class Map extends React.Component {
                             'LAYERS': 'SRTM30-Colored'
                         }
                     })
-                }),
-                featureLayer
+                })
             ],
         });
 
@@ -107,29 +86,19 @@ class Map extends React.Component {
             });
         });
 
-
-
         this.state = {
             mapMenuCoords: [],
-            visibleMap: false
+            visibleMap: false,
+            appliedFilters: this.props.map.appliedFilters
         };
     }
 
     componentWillMount = async () => {
         await this.props.MapActions.setMap(this.map);
-        // console.log(this.map.getLayers().getArray());
-
-        // const layerD = this.map.getLayers().getArray()[2];
-        // console.log(layerD);
-        // layerD.setVisible(false);
-
-        // console.log(this.map.getLayers());
         this.map.setTarget(this.mapDivId);
     }
 
     componentDidUpdate = async (prevProps, prevState) => {
-
-        //console.log("mudou");
         if (this.map) {
             this.map.getLayers().getArray().forEach((item, index) => {
                 if ((item.getProperties().id === this.props.map.layers[index].id) && this.props.map.layers[index].visible === true) {
@@ -138,6 +107,19 @@ class Map extends React.Component {
                     item.setVisible(false);
                 }
             });
+
+            if (this.state.appliedFilters != this.props.map.appliedFilters) {
+                this.setState({ appliedFilters: this.props.map.appliedFilters });
+                const { latitude, longitude } = this.props.map.appliedFilters.city;
+                debugger;
+                this.map.setView(
+                    new OlView({
+                        center: fromLonLat([longitude, latitude], 'EPSG:4326'),
+                        zoom: 10,
+                        projection: 'EPSG:4326'
+                    })
+                );
+            }
         }
     }
 
