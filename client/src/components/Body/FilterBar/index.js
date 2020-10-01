@@ -28,15 +28,21 @@ const FilterBar = props => {
     }, [allStates, citiesByState]);
 
     const fetchDataCities = async (state) => {
-        if (state && !citiesByState) {
+        debugger;
+        const validState = allStates.find(item => item.nome === state);
+        console.log(validState);
+        if (validState) {
             await api.get('/api/map/get/cities', {
                 params: {
                     state: state
                 }
             })
                 .then(async (res) => {
+                    debugger
                     setCitiesByState(res.data);
                 })
+        } else {
+            setCitiesByState(null);
         }
     }
 
@@ -56,7 +62,6 @@ const FilterBar = props => {
     const handleDatalistChange = async (e, place) => {
         if (place === "states") {
             props.MapActions.setState(e.target.value);
-            setCitiesByState(null);
             fetchDataCities(e.target.value);
         }
 
@@ -67,16 +72,44 @@ const FilterBar = props => {
 
     const handleApllyFiltersClick = async () => {
         const { state, city, country } = props.map;
-        console.log(state, city, country);
 
-        const stateData = allStates.filter(item => item.nome === state);
+        let stateData = null;
+        let cityData = null;
 
-        const cityData = citiesByState.filter(item => item.nome === city);
+        debugger;
 
-        console.log(stateData[0], cityData[0]);
+        if (!state) {
+            return alert(`Pesquisa Inválida`);
+        }
 
-        alert(`Você Buscou pelo estado de ${state} e cidade ${city}. Coordenadas (${cityData[0].latitude}, ${cityData[0].longitude})`)
+        else {
+            if (state && city) {
+                stateData = allStates.filter(item => item.nome === state);
+                cityData = citiesByState.filter(item => item.nome === city);
 
+                alert(`Você Buscou pelo estado de ${state} e cidade ${city}. Coordenadas (${cityData[0].latitude}, ${cityData[0].longitude})`)
+                console.log(stateData[0], cityData[0]);
+
+                const obj = {
+                    'state': stateData[0],
+                    'city': cityData[0]
+                }
+
+                props.MapActions.setAppliedFilters(obj);
+
+                return;
+            } else {
+                stateData = allStates.filter(item => item.nome === state);
+                const obj = {
+                    'state': stateData[0]
+                }
+
+                props.MapActions.setAppliedFilters(obj);
+
+                alert(`Você Buscou pelo estado de ${state} . Coordenadas (${stateData[0].latitude}, ${stateData[0].longitude})`)
+                return;
+            }
+        }
     }
 
     return (
@@ -98,13 +131,13 @@ const FilterBar = props => {
                 </div>
 
                 <input onChange={(e) => handleDatalistChange(e, "states")} disabled={country === true} type="text" name="States" placeholder="Estados" list="exampleList" />
-                <datalist style={{}} onChange={(e) => handleDatalistChange(e, "states")} id="exampleList">
+                <datalist onChange={(e) => handleDatalistChange(e, "states")} id="exampleList">
                     {allStates && country === false ? allStates.map(item => { return <option key={item.codigo_uf} value={item.nome} /> }) : <option value={""} />}
                 </datalist>
 
-                <input onChange={(e) => handleDatalistChange(e, "cities")} disabled={country === true || props.map.state === null} type="text" name="Cities" placeholder="Cidades" list="dataListCidades" />
+                <input onChange={(e) => handleDatalistChange(e, "cities")} disabled={country === true || props.map.state === null || props.map.state === ""} type="text" name="Cities" placeholder="Cidades" list="dataListCidades" />
                 <datalist id="dataListCidades">
-                    {citiesByState && country === false ? citiesByState.map((item, index) => { return <option key={index + Math.random()} codigo={item.codigo_ibge} value={item.nome} /> }) : null}
+                    {citiesByState && country === false ? citiesByState.map((item, index) => { return <option key={index} codigo={item.codigo_ibge} value={item.nome} /> }) : null}
                 </datalist>
 
             </BottomDiv>
