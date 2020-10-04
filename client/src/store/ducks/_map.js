@@ -76,6 +76,12 @@ export default function reducer(state = INITIAL_STATE, action) {
                 appliedFilters: action.payload
             }
 
+        case Types.SET_FILTERED_DATA:
+            return {
+                ...state,
+                filteredData: action.payload
+            }
+
         default:
             return state
     }
