@@ -29,7 +29,6 @@ const FilterBar = props => {
 
     const fetchDataCities = async (state) => {
         const validState = allStates.find(item => item.nome === state);
-        console.log(validState);
         if (validState) {
             await api.get('/api/map/get/cities', {
                 params: {
@@ -84,23 +83,21 @@ const FilterBar = props => {
             if (state && city) {
                 cityData = citiesByState.filter(item => item.nome === city);
 
-                alert(`Você Buscou pelo estado de ${state} e cidade ${city}. Coordenadas (${cityData[0].latitude}, ${cityData[0].longitude})`)
+                //alert(`Você Buscou pelo estado de ${state} e cidade ${city}. Coordenadas (${cityData[0].latitude}, ${cityData[0].longitude})`)
                 console.log(stateData[0], cityData[0]);
 
                 obj = {
                     'state': stateData[0],
                     'city': cityData[0]
-                }
-                //props.MapActions.setAppliedFilters(obj);
-                
+                }                
             } else {
                 obj = {
                     'state': stateData[0]
                 }
                 
-                //props.MapActions.setAppliedFilters(obj);                
-                alert(`Você Buscou pelo estado de ${state} . Coordenadas (${stateData[0].latitude}, ${stateData[0].longitude})`)
+                //alert(`Você Buscou pelo estado de ${state} . Coordenadas (${stateData[0].latitude}, ${stateData[0].longitude})`)
             }
+            props.MapActions.setAppliedFilters(obj);                
             fetchDataCases(obj);
         }
     }
@@ -113,7 +110,6 @@ const FilterBar = props => {
             params: params
         })
             .then(async (res) => {
-                debugger;
                 props.MapActions.setFilteredData(res.data);
             })         
     }
