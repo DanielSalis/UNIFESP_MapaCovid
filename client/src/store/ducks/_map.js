@@ -19,12 +19,6 @@ const INITIAL_STATE = {
             text: "Layer 1",
             name: 'OSM',
             visible: true,
-        },
-        {
-            id: 2,
-            text: "Layer 3",
-            name: 'SRTM30-Contour',
-            visible: false
         }
     ],
     appliedFilters: null,

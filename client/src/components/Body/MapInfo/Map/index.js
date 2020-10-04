@@ -74,7 +74,6 @@ class Map extends React.Component {
             console.log(evt)
             const map = evt.map;
             const mapEl = document.getElementById(this.mapDivId);
-            const pixel = map.getPixelFromCoordinate([0.1691495, 0.6565482]);
             const evtPixel = map.getPixelFromCoordinate(evt.coordinate);
             let visibleMap;
             let mapMenuCoords;
@@ -82,8 +81,8 @@ class Map extends React.Component {
             if (map.hasFeatureAtPixel(evtPixel)) {
                 visibleMap = true;
                 mapMenuCoords = [
-                    pixel[0] + mapEl.offsetLeft,
-                    pixel[1] + mapEl.offsetTop,
+                    evtPixel[0] + mapEl.offsetLeft,
+                    evtPixel[1] + mapEl.offsetTop,
                 ];
             } else {
                 visibleMap = false;
@@ -110,13 +109,6 @@ class Map extends React.Component {
 
     componentDidUpdate = async (prevProps, prevState) => {
         if (this.map) {
-            this.map.getLayers().getArray().forEach((item, index) => {
-                if (this.props.map.layers[index] && (item.getProperties().id === this.props.map.layers[index].id) && this.props.map.layers[index].visible === true) {
-                    item.setVisible(true);
-                } else {
-                    item.setVisible(false);
-                }
-            });
 
             if (this.state.appliedFilters != this.props.map.appliedFilters) {
                 this.setState({ appliedFilters: this.props.map.appliedFilters });
@@ -132,7 +124,6 @@ class Map extends React.Component {
             }
 
             if (this.state.filteredData != this.props.map.filteredData) {
-                debugger;
                 this.sourceFeatures.clear();
                 this.setState({ filteredData: this.props.map.filteredData });
                 const casos = this.props.map.filteredData;
@@ -147,11 +138,10 @@ class Map extends React.Component {
                     });
                     feature.setStyle(new Style({
                         image: new Circle({
-                          radius: 5,
-                          fill: new Fill({color: 'yellow'}),
-                          stroke: new Stroke({color: 'red', width: 1}),
+                            radius: 10,
+                            fill: new Fill({ color: '#1976D2' }),
                         }),
-                      }));
+                    }));
                     feature.setProperties(c);
                     this.sourceFeatures.addFeature(feature);
                 });
@@ -184,11 +174,10 @@ class Map extends React.Component {
                                     position={this.state.mapMenuCoords}
                                     diameter={80}
                                     animationDuration={500}
+                                    style={{ color: '#1976D2', background: 'radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0.65) 100%)' }}
+
                                 >
-                                    <SimpleButton iconName="pencil" shape="circle" />
                                     <SimpleButton iconName="line-chart" shape="circle" />
-                                    <SimpleButton iconName="link" shape="circle" />
-                                    <SimpleButton iconName="thumbs-o-up" shape="circle" />
                                     <SimpleButton iconName="bullhorn" shape="circle" />
                                 </CircleMenu> :
                                 null
