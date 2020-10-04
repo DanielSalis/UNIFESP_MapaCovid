@@ -4,7 +4,8 @@ export const Types = {
     SET_CITY_FILTER: '_map/SET_CITY_FILTER',
     SET_MAP: '_map/SET_MAP',
     CHANGE_LAYER: '_map/CHANGE_LAYER',
-    SET_APPLIED_FILTERS: '_map/SET_APPLIED_FILTERS'
+    SET_APPLIED_FILTERS: '_map/SET_APPLIED_FILTERS',
+    SET_FILTERED_DATA: '_map/SET_FILTERED_DATA'
 }
 
 const INITIAL_STATE = {
@@ -26,7 +27,8 @@ const INITIAL_STATE = {
             visible: false
         }
     ],
-    appliedFilters: null
+    appliedFilters: null,
+    filteredData: null,
 }
 
 export default function reducer(state = INITIAL_STATE, action) {
@@ -110,6 +112,11 @@ export const Actions = {
 
     setAppliedFilters: (data) => ({
         type: Types.SET_APPLIED_FILTERS,
+        payload: data
+    }),
+
+    setFilteredData: (data) => ({
+        type: Types.SET_FILTERED_DATA,
         payload: data
     })
 }
