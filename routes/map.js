@@ -71,7 +71,7 @@ router.get('/get/casesByState', async (request, response) => {
         let query = ``;
         let result = null;
 
-        query = `SELECT c.codigo_ibge, COUNT(novos) as casos, COUNT(obitos_novos) as obitos
+        query = `SELECT c.codigo_ibge, SUM(novos) as casos, SUM(obitos_novos) as obitos
                  FROM public.casos c
                  INNER JOIN public.municipios m ON m.codigo_ibge = c.codigo_ibge
                  WHERE codigo_uf = ${id}
@@ -97,7 +97,7 @@ router.get('/get/casesByCity', async (request, response) => {
         let query = ``;
         let result = null;
 
-        query = `SELECT COUNT(novos) as casos, COUNT(obitos_novos) as obitos
+        query = `SELECT SUM(novos) as casos, SUM(obitos_novos) as obitos
                  FROM public.casos c
                  WHERE codigo_ibge = ${id}
                  GROUP BY codigo_ibge
