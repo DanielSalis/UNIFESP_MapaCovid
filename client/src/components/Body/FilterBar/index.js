@@ -28,9 +28,7 @@ const FilterBar = props => {
     }, [allStates, citiesByState]);
 
     const fetchDataCities = async (state) => {
-        debugger;
         const validState = allStates.find(item => item.nome === state);
-        console.log(validState);
         if (validState) {
             await api.get('/api/map/get/cities', {
                 params: {
@@ -38,7 +36,6 @@ const FilterBar = props => {
                 }
             })
                 .then(async (res) => {
-                    debugger
                     setCitiesByState(res.data);
                 })
         } else {
@@ -75,43 +72,47 @@ const FilterBar = props => {
 
         let stateData = null;
         let cityData = null;
-
-        debugger;
+        let obj = {};
 
         if (!state) {
             return alert(`Pesquisa Inválida`);
         }
 
         else {
+            stateData = allStates.filter(item => item.nome === state);
             if (state && city) {
-                stateData = allStates.filter(item => item.nome === state);
                 cityData = citiesByState.filter(item => item.nome === city);
 
-                alert(`Você Buscou pelo estado de ${state} e cidade ${city}. Coordenadas (${cityData[0].latitude}, ${cityData[0].longitude})`)
+                //alert(`Você Buscou pelo estado de ${state} e cidade ${city}. Coordenadas (${cityData[0].latitude}, ${cityData[0].longitude})`)
                 console.log(stateData[0], cityData[0]);
 
-                const obj = {
+                obj = {
                     'state': stateData[0],
                     'city': cityData[0]
-                }
-
-                props.MapActions.setAppliedFilters(obj);
-
-                return;
+                }                
             } else {
-                stateData = allStates.filter(item => item.nome === state);
-                const obj = {
+                obj = {
                     'state': stateData[0]
                 }
-
-                props.MapActions.setAppliedFilters(obj);
-
-                alert(`Você Buscou pelo estado de ${state} . Coordenadas (${stateData[0].latitude}, ${stateData[0].longitude})`)
-                return;
+                
+                //alert(`Você Buscou pelo estado de ${state} . Coordenadas (${stateData[0].latitude}, ${stateData[0].longitude})`)
             }
+            props.MapActions.setAppliedFilters(obj);                
+            fetchDataCases(obj);
         }
     }
 
+    const fetchDataCases = async (obj) => {
+        const params = { id: (obj.city == null) ? obj.state.codigo_uf: obj.city.codigo_ibge };
+        const endpoint = (obj.city == null) ? 'casesByState' : 'casesByCity';
+
+        api.get(`/api/map/get/${endpoint}`, {
+            params: params
+        })
+            .then(async (res) => {
+                props.MapActions.setFilteredData(res.data);
+            })         
+    }
     return (
         <Container>
             <UpperDiv>

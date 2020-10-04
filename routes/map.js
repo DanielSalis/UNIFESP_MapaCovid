@@ -64,4 +64,55 @@ router.get('/get/cities', async (request, response) => {
     }
 });
 
+router.get('/get/casesByState', async (request, response) => {
+    try {
+        const { id } = request.query
+
+        let query = ``;
+        let result = null;
+
+        query = `SELECT c.codigo_ibge, SUM(novos) as casos, SUM(obitos_novos) as obitos
+                 FROM public.casos c
+                 INNER JOIN public.municipios m ON m.codigo_ibge = c.codigo_ibge
+                 WHERE codigo_uf = ${id}
+                 GROUP BY c.codigo_ibge
+        `;
+
+        result = await db.query(query);
+        const cases = result.rows.map(item => {
+            return item;
+        })
+
+        response.status(200).json(cases);
+
+    } catch (e) {
+        response.status(500).send(`Server Error -> ${e}`);
+    }
+});
+
+router.get('/get/casesByCity', async (request, response) => {
+    try {
+        const { id } = request.query
+
+        let query = ``;
+        let result = null;
+
+        query = `SELECT SUM(novos) as casos, SUM(obitos_novos) as obitos
+                 FROM public.casos c
+                 WHERE codigo_ibge = ${id}
+                 GROUP BY codigo_ibge
+        `;
+
+        result = await db.query(query);
+        const cases = result.rows.map(item => {
+            return item;
+        })
+
+        response.status(200).json(cases);
+
+    } catch (e) {
+        response.status(500).send(`Server Error -> ${e}`);
+    }
+});
+
 module.exports = router;

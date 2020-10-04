@@ -9,9 +9,8 @@ import OlSourceOSM from 'ol/source/OSM';
 import OlSourceVector from 'ol/source/Vector';
 import OlFeature from 'ol/Feature';
 import OlGeomPoint from 'ol/geom/Point';
-import OlStyleStyle from 'ol/style/Style';
-import OlStyleCircle from 'ol/style/Circle';
-import OlStyleFill from 'ol/style/Fill';
+import OlGeomCircle from 'ol/geom/Circle';
+import { Style, Circle, Fill, Stroke } from 'ol/style';
 import OlSourceTileWMS from 'ol/source/TileWMS';
 
 import { CircleMenu, SimpleButton } from '@terrestris/react-geo/';
@@ -28,6 +27,11 @@ class Map extends React.Component {
         super(props);
 
         this.mapDivId = `map-${Math.random()}`;
+
+        const source = new OlSourceVector({
+            features: []
+        });
+        this.sourceFeatures = source;
 
         this.map = new OlMap({
             view: new OlView({
@@ -57,6 +61,11 @@ class Map extends React.Component {
                             'LAYERS': 'SRTM30-Colored'
                         }
                     })
+                }),
+                new OlLayerVector({
+                    id: 3,
+                    name: 'features',
+                    source: this.sourceFeatures
                 })
             ],
         });
@@ -65,7 +74,6 @@ class Map extends React.Component {
             console.log(evt)
             const map = evt.map;
             const mapEl = document.getElementById(this.mapDivId);
-            const pixel = map.getPixelFromCoordinate([0.1691495, 0.6565482]);
             const evtPixel = map.getPixelFromCoordinate(evt.coordinate);
             let visibleMap;
             let mapMenuCoords;
@@ -73,8 +81,8 @@ class Map extends React.Component {
             if (map.hasFeatureAtPixel(evtPixel)) {
                 visibleMap = true;
                 mapMenuCoords = [
-                    pixel[0] + mapEl.offsetLeft,
-                    pixel[1] + mapEl.offsetTop,
+                    evtPixel[0] + mapEl.offsetLeft,
+                    evtPixel[1] + mapEl.offsetTop,
                 ];
             } else {
                 visibleMap = false;
@@ -89,7 +97,8 @@ class Map extends React.Component {
         this.state = {
             mapMenuCoords: [],
             visibleMap: false,
-            appliedFilters: this.props.map.appliedFilters
+            appliedFilters: this.props.map.appliedFilters,
+            filteredData: this.props.map.filteredData
         };
     }
 
@@ -100,18 +109,11 @@ class Map extends React.Component {
 
     componentDidUpdate = async (prevProps, prevState) => {
         if (this.map) {
-            this.map.getLayers().getArray().forEach((item, index) => {
-                if ((item.getProperties().id === this.props.map.layers[index].id) && this.props.map.layers[index].visible === true) {
-                    item.setVisible(true);
-                } else {
-                    item.setVisible(false);
-                }
-            });
 
             if (this.state.appliedFilters != this.props.map.appliedFilters) {
                 this.setState({ appliedFilters: this.props.map.appliedFilters });
                 const { latitude, longitude } = this.props.map.appliedFilters.city;
-                debugger;
+
                 this.map.setView(
                     new OlView({
                         center: fromLonLat([longitude, latitude], 'EPSG:4326'),
@@ -119,6 +121,33 @@ class Map extends React.Component {
                         projection: 'EPSG:4326'
                     })
                 );
+            }
+
+            if (this.state.filteredData != this.props.map.filteredData) {
+                this.sourceFeatures.clear();
+                this.setState({ filteredData: this.props.map.filteredData });
+                const casos = this.props.map.filteredData;
+
+                casos.forEach((c) => {
+                    const { latitude, longitude } = (!c.codigo_ibge) ? this.state.appliedFilters.city :
+                        this.state.appliedFilters.city;
+
+                    const coords = fromLonLat([longitude, latitude], 'EPSG:4326');
+                    var feature = new OlFeature({
+                        geometry: new OlGeomPoint(coords),
+                    });
+                    feature.setStyle(new Style({
+                        image: new Circle({
+                            radius: 10,
+                            fill: new Fill({ color: '#1976D2' }),
+                        }),
+                    }));
+                    feature.setProperties(c);
+                    this.sourceFeatures.addFeature(feature);
+                });
+
+                this.map.getView().fit(this.sourceFeatures.getExtent(), this.map.getSize());
+                this.map.getView().setZoom(10);
             }
         }
     }
@@ -145,11 +174,10 @@ class Map extends React.Component {
                                     position={this.state.mapMenuCoords}
                                     diameter={80}
                                     animationDuration={500}
+                                    style={{ color: '#1976D2', background: 'radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0.65) 100%)' }}
+
                                 >
-                                    <SimpleButton iconName="pencil" shape="circle" />
                                     <SimpleButton iconName="line-chart" shape="circle" />
-                                    <SimpleButton iconName="link" shape="circle" />
-                                    <SimpleButton iconName="thumbs-o-up" shape="circle" />
                                     <SimpleButton iconName="bullhorn" shape="circle" />
                                 </CircleMenu> :
                                 null
