@@ -117,6 +117,7 @@ class Map extends React.Component {
             filteredData: this.props.map.filteredData,
             casos: 0,
             obitos: 0,
+            municipio: '',
             showPopup: false
         };
     }
@@ -135,8 +136,7 @@ class Map extends React.Component {
                 const casos = this.props.map.filteredData;
 
                 casos.forEach((c) => {
-                    const { latitude, longitude } = (!c.codigo_ibge) ? this.state.appliedFilters.city :
-                        this.state.appliedFilters.city;
+                    const { latitude, longitude } = (!c.codigo_ibge) ? this.state.appliedFilters.city : c;
 
                     const coords = fromLonLat([longitude, latitude], 'EPSG:4326');
                     var feature = new OlFeature({
@@ -153,21 +153,24 @@ class Map extends React.Component {
                 });
 
                 this.map.getView().fit(this.sourceFeatures.getExtent(), this.map.getSize());
-                this.map.getView().setZoom(10);
+                this.map.getView().setZoom(5);
             }
 
             else if (this.state.appliedFilters != this.props.map.appliedFilters) {
                 this.setState({ appliedFilters: this.props.map.appliedFilters });
                 this.setState({ showPopup: false });
-                const { latitude, longitude } = this.props.map.appliedFilters.city;
 
-                this.map.setView(
-                    new OlView({
-                        center: fromLonLat([longitude, latitude], 'EPSG:4326'),
-                        zoom: 10,
-                        projection: 'EPSG:4326'
-                    })
-                );
+                if (this.props.map.appliedFilters.city) {
+                    const { latitude, longitude } = this.props.map.appliedFilters.city;
+
+                    this.map.setView(
+                        new OlView({
+                            center: fromLonLat([longitude, latitude], 'EPSG:4326'),
+                            zoom: 10,
+                            projection: 'EPSG:4326'
+                        })
+                    );
+                }
             }
         }
     }
@@ -187,6 +190,7 @@ class Map extends React.Component {
             const properties = this.feature[0].getProperties();
             this.setState({ casos: properties.casos });
             this.setState({ obitos: properties.obitos });
+            this.setState({ municipio: properties.nome });
         }
         this.popup.setPosition(this.coords);
         this.setState({ showPopup: true });
@@ -233,6 +237,7 @@ class Map extends React.Component {
                     <div className='ol-popup' ref={this.setPopupDiv} style={{ opacity: this.state.showPopup ? '1' : '0' }}>
                         <a href='#' id='popup-closer' className='ol-popup-closer' onClick={(e) => this.closePopup(e)}></a>
                         <div id='popup-content'>
+                            <p><label>Município: <b>{this.state.municipio}</b> </label></p>
                             {this.state.casos != 0 ? <p><label>Número de Casos: {this.state.casos}</label></p> : null}
                             {this.state.obitos != 0 ? <p><label>Número de Óbitos: {this.state.obitos}</label></p> : null}
                             {this.state.obitos == 0 && this.state.casos == 0 ? <p>Não existem dados para este município.</p> : null}
