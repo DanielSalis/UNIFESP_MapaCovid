@@ -158,6 +158,7 @@ class Map extends React.Component {
 
             else if (this.state.appliedFilters != this.props.map.appliedFilters) {
                 this.setState({ appliedFilters: this.props.map.appliedFilters });
+                this.setState({ showPopup: false });
                 const { latitude, longitude } = this.props.map.appliedFilters.city;
 
                 this.map.setView(
@@ -187,9 +188,9 @@ class Map extends React.Component {
             this.setState({ casos: properties.casos });
             this.setState({ obitos: properties.obitos });
         }
+        this.popup.setPosition(this.coords);
         this.setState({ showPopup: true });
         this.setState({ visibleMap: false });
-        this.popup.setPosition(this.coords);
     }
 
     closePopup = (e) => {
@@ -222,21 +223,21 @@ class Map extends React.Component {
                                     style={{ color: '#1976D2', background: 'radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0.65) 100%)' }}
 
                                 >
-                                    <SimpleButton iconName='line-chart' shape='circle'  />
-                                    <SimpleButton iconName='bullhorn' shape='circle' onClick={ (e) => this.showPopup(e) } />
+                                    <SimpleButton iconName='line-chart' shape='circle' />
+                                    <SimpleButton iconName='bullhorn' shape='circle' onClick={(e) => this.showPopup(e)} />
                                 </CircleMenu> :
                                 null
                         }
                     </div>
 
-                    <div className='ol-popup' ref={this.setPopupDiv} style={{display: this.state.showPopup ? 'block' : 'none'}}>
-                        <a href='#' id='popup-closer' className='ol-popup-closer' onClick = { (e) => this.closePopup(e) }></a>
+                    <div className='ol-popup' ref={this.setPopupDiv} style={{ opacity: this.state.showPopup ? '1' : '0' }}>
+                        <a href='#' id='popup-closer' className='ol-popup-closer' onClick={(e) => this.closePopup(e)}></a>
                         <div id='popup-content'>
-                            { this.state.casos != 0 ? <p><label>Número de Casos: {this.state.casos}</label></p> : null }
-                            { this.state.obitos != 0 ? <p><label>Número de Óbitos: {this.state.obitos}</label></p> : null }
-                            { this.state.obitos == 0 && this.state.casos == 0 ? <p>Não existem dados para este município.</p> : null }
+                            {this.state.casos != 0 ? <p><label>Número de Casos: {this.state.casos}</label></p> : null}
+                            {this.state.obitos != 0 ? <p><label>Número de Óbitos: {this.state.obitos}</label></p> : null}
+                            {this.state.obitos == 0 && this.state.casos == 0 ? <p>Não existem dados para este município.</p> : null}
                         </div>
-                    </div>                    
+                    </div>
                 </div>
             </>
         );
