@@ -71,11 +71,12 @@ router.get('/get/casesByState', async (request, response) => {
         let query = ``;
         let result = null;
 
-        query = `SELECT c.codigo_ibge, SUM(novos) as casos, SUM(obitos_novos) as obitos
+        query = `SELECT c.codigo_ibge, latitude, longitude, m.nome, SUM(novos) as casos, SUM(obitos_novos) as obitos
                  FROM public.casos c
                  INNER JOIN public.municipios m ON m.codigo_ibge = c.codigo_ibge
-                 WHERE codigo_uf = ${id}
-                 GROUP BY c.codigo_ibge
+                 WHERE codigo_uf = ${id} 
+                 GROUP BY c.codigo_ibge, latitude, longitude, nome
+                 HAVING SUM(novos) > 0
         `;
 
         result = await db.query(query);
