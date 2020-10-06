@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import './style.css';
+
 import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 import { fromLonLat } from 'ol/proj';
@@ -9,9 +11,9 @@ import OlSourceOSM from 'ol/source/OSM';
 import OlSourceVector from 'ol/source/Vector';
 import OlFeature from 'ol/Feature';
 import OlGeomPoint from 'ol/geom/Point';
-import OlGeomCircle from 'ol/geom/Circle';
-import { Style, Circle, Fill, Stroke } from 'ol/style';
+import { Style, Circle, Fill } from 'ol/style';
 import OlSourceTileWMS from 'ol/source/TileWMS';
+import Overlay from 'ol/Overlay'
 
 import { CircleMenu, SimpleButton } from '@terrestris/react-geo/';
 
@@ -27,6 +29,15 @@ class Map extends React.Component {
         super(props);
 
         this.mapDivId = `map-${Math.random()}`;
+
+        this.popup = null;
+        this.popupDiv = null;
+        this.setPopupDiv = element => {
+            this.popupDiv = element;
+        }
+
+        this.casos = 0;
+        this.obitos = 0;
 
         const source = new OlSourceVector({
             features: []
@@ -71,7 +82,6 @@ class Map extends React.Component {
         });
 
         this.map.on('singleclick', evt => {
-            console.log(evt)
             const map = evt.map;
             const mapEl = document.getElementById(this.mapDivId);
             const evtPixel = map.getPixelFromCoordinate(evt.coordinate);
@@ -84,8 +94,14 @@ class Map extends React.Component {
                     evtPixel[0] + mapEl.offsetLeft,
                     evtPixel[1] + mapEl.offsetTop,
                 ];
+
+                this.coords = evt.coordinate;
+                this.feature = map.getFeaturesAtPixel(evtPixel);
             } else {
                 visibleMap = false;
+
+                this.coords = [];
+                this.feature = [];
             }
 
             this.setState({
@@ -98,7 +114,11 @@ class Map extends React.Component {
             mapMenuCoords: [],
             visibleMap: false,
             appliedFilters: this.props.map.appliedFilters,
-            filteredData: this.props.map.filteredData
+            filteredData: this.props.map.filteredData,
+            casos: 0,
+            obitos: 0,
+            municipio: '',
+            showPopup: false
         };
     }
 
@@ -110,27 +130,13 @@ class Map extends React.Component {
     componentDidUpdate = async (prevProps, prevState) => {
         if (this.map) {
 
-            if (this.state.appliedFilters != this.props.map.appliedFilters) {
-                this.setState({ appliedFilters: this.props.map.appliedFilters });
-                const { latitude, longitude } = this.props.map.appliedFilters.city;
-
-                this.map.setView(
-                    new OlView({
-                        center: fromLonLat([longitude, latitude], 'EPSG:4326'),
-                        zoom: 10,
-                        projection: 'EPSG:4326'
-                    })
-                );
-            }
-
             if (this.state.filteredData != this.props.map.filteredData) {
                 this.sourceFeatures.clear();
                 this.setState({ filteredData: this.props.map.filteredData });
                 const casos = this.props.map.filteredData;
 
                 casos.forEach((c) => {
-                    const { latitude, longitude } = (!c.codigo_ibge) ? this.state.appliedFilters.city :
-                        this.state.appliedFilters.city;
+                    const { latitude, longitude } = (!c.codigo_ibge) ? this.state.appliedFilters.city : c;
 
                     const coords = fromLonLat([longitude, latitude], 'EPSG:4326');
                     var feature = new OlFeature({
@@ -147,9 +153,53 @@ class Map extends React.Component {
                 });
 
                 this.map.getView().fit(this.sourceFeatures.getExtent(), this.map.getSize());
-                this.map.getView().setZoom(10);
+                this.map.getView().setZoom(5);
+            }
+
+            else if (this.state.appliedFilters != this.props.map.appliedFilters) {
+                this.setState({ appliedFilters: this.props.map.appliedFilters });
+                this.setState({ showPopup: false });
+
+                if (this.props.map.appliedFilters.city) {
+                    const { latitude, longitude } = this.props.map.appliedFilters.city;
+
+                    this.map.setView(
+                        new OlView({
+                            center: fromLonLat([longitude, latitude], 'EPSG:4326'),
+                            zoom: 10,
+                            projection: 'EPSG:4326'
+                        })
+                    );
+                }
             }
         }
+    }
+
+    showPopup = (e) => {
+        if (!this.popup) {
+            this.popup = new Overlay({
+                element: this.popupDiv,
+                autoPan: true,
+                autoPanAnimation: {
+                    duration: 250,
+                },
+            });
+            this.map.addOverlay(this.popup);
+        }
+        if (this.feature != null && this.feature.length > 0) {
+            const properties = this.feature[0].getProperties();
+            this.setState({ casos: properties.casos });
+            this.setState({ obitos: properties.obitos });
+            this.setState({ municipio: properties.nome });
+        }
+        this.popup.setPosition(this.coords);
+        this.setState({ showPopup: true });
+        this.setState({ visibleMap: false });
+    }
+
+    closePopup = (e) => {
+        this.popup.setPosition(undefined);
+        return false;
     }
 
     render() {
@@ -158,7 +208,7 @@ class Map extends React.Component {
                 <div style={{
                     width: '100%',
                     height: '90%',
-                    backgroundColor: "#def3f6",
+                    backgroundColor: '#def3f6',
                     border: '1px solid black'
                 }}>
                     <div
@@ -177,11 +227,21 @@ class Map extends React.Component {
                                     style={{ color: '#1976D2', background: 'radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0.65) 100%)' }}
 
                                 >
-                                    <SimpleButton iconName="line-chart" shape="circle" />
-                                    <SimpleButton iconName="bullhorn" shape="circle" />
+                                    <SimpleButton iconName='line-chart' shape='circle' />
+                                    <SimpleButton iconName='bullhorn' shape='circle' onClick={(e) => this.showPopup(e)} />
                                 </CircleMenu> :
                                 null
                         }
+                    </div>
+
+                    <div className='ol-popup' ref={this.setPopupDiv} style={{ opacity: this.state.showPopup ? '1' : '0' }}>
+                        <a href='#' id='popup-closer' className='ol-popup-closer' onClick={(e) => this.closePopup(e)}></a>
+                        <div id='popup-content'>
+                            <p><label>Município: <b>{this.state.municipio}</b> </label></p>
+                            {this.state.casos != 0 ? <p><label>Número de Casos: {this.state.casos}</label></p> : null}
+                            {this.state.obitos != 0 ? <p><label>Número de Óbitos: {this.state.obitos}</label></p> : null}
+                            {this.state.obitos == 0 && this.state.casos == 0 ? <p>Não existem dados para este município.</p> : null}
+                        </div>
                     </div>
                 </div>
             </>
