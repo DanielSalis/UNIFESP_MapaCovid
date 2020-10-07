@@ -11,11 +11,13 @@ export const Container = styled.div`
     border-top: 3px solid #bbb;
   }
 `;
+
 export const BottomDiv = styled.div`
   background: #1976d252;
   width: -webkit-fill-available;
   padding: 10px 10px;
   border-radius: 10px;
+
   margin-top: 5px;
   display: flex;
   flex-direction: row;

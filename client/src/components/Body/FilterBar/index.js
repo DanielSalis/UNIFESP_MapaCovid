@@ -194,6 +194,7 @@ const FilterBar = (props) => {
               })
             : null}
         </datalist>
+
         <FilterButton>
           <button onClick={() => handleApllyFiltersClick()}>
             Aplicar Filtros

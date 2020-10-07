@@ -17,6 +17,7 @@ export const SpanLayers = styled.div`
   margin: 0 0 0.5rem 0;
   display: flex;
   flex-direction: row;
+
   align-items: center;
   justify-content: flex-start;
   width: 100%;
