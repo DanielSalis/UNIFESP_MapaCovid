@@ -35,17 +35,9 @@ class Charts extends Component {
                 },
                 xaxis: {
                     type: 'datetime',
-                    title: {
-                        text: 'Data'
-                    },
                 },
                 tooltip: {
                     shared: true,
-                    y: {
-                        // formatter: function (val) {
-                        //     return (val / 1000000).toFixed(0)
-                        // }
-                    }
                 },
             },
             series: []
@@ -63,14 +55,19 @@ class Charts extends Component {
 
     prepareData = (list) => {
         this.setState({
-            series: [{
-                name: 'Casos', data: list.map((l) => l.casos)
-            }],
+            series: [
+                {
+                    name: 'Casos', data: list.map((l) => l.casos)
+                },
+                {
+                    name: 'Óbitos', data: list.map((l) => l.obitos)
+                }
+            ],
             options: {
                 ...this.state.options,
                 xaxis: {
                     categories: list.map((l) => l.dt_caso)
-                }   
+                }
             }
         });
     }
