@@ -1,27 +1,78 @@
 import React, { Component } from "react";
-import ReactApexCharts from 'react-apexcharts'
 import Chart from "react-apexcharts";
+import api from '../../../API';
 
 class Charts extends Component {
     constructor(props) {
         super(props);
 
+        this.fetchCasesByDate(props.cod);
         this.state = {
             options: {
                 chart: {
-                    id: "basic-bar"
+                    id: 'chart',
+                    type: 'area',
+                    stacked: false,
+                    zoom: {
+                        type: 'x',
+                        enabled: true,
+                        autoScaleYaxis: true
+                    },
+                    toolbar: {
+                        autoSelected: 'zoom'
+                    },
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                markers: {
+                    size: 0,
+                },
+                yaxis: {
+                    title: {
+                        text: 'Casos/óbitos'
+                    },
                 },
                 xaxis: {
-                    categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
-                }
+                    type: 'datetime',
+                    title: {
+                        text: 'Data'
+                    },
+                },
+                tooltip: {
+                    shared: true,
+                    y: {
+                        // formatter: function (val) {
+                        //     return (val / 1000000).toFixed(0)
+                        // }
+                    }
+                },
             },
-            series: [
-                {
-                    name: "series-1",
-                    data: [30, 40, 45, 50, 49, 60, 70, 91]
-                }
-            ]
+            series: []
         };
+    }
+
+    fetchCasesByDate = async (codIbge) => {
+        api.get(`/api/map/get/casesByDate`, {
+            params: { codIbge }
+        })
+            .then(async (res) => {
+                this.prepareData(res.data);
+            })
+    }
+
+    prepareData = (list) => {
+        this.setState({
+            series: [{
+                name: 'Casos', data: list.map((l) => l.casos)
+            }],
+            options: {
+                ...this.state.options,
+                xaxis: {
+                    categories: list.map((l) => l.dt_caso)
+                }   
+            }
+        });
     }
 
     render() {
@@ -29,8 +80,8 @@ class Charts extends Component {
             <Chart
                 options={this.state.options}
                 series={this.state.series}
-                type="bar"
-                width="500"
+                type="area"
+                width="350"
             />
         );
     }
