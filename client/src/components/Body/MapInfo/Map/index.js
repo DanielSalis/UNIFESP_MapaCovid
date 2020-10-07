@@ -119,6 +119,7 @@ class Map extends React.Component {
             casos: 0,
             obitos: 0,
             municipio: '',
+            cod: 0,
             showPopup: false,
             simplePopup: true,
         };
@@ -138,7 +139,7 @@ class Map extends React.Component {
                 const casos = this.props.map.filteredData;
 
                 casos.forEach((c) => {
-                    const { latitude, longitude, nome } = (!c.codigo_ibge) ? this.state.appliedFilters.city : c;
+                    const { latitude, longitude, nome, codigo_ibge } = (!c.codigo_ibge) ? this.state.appliedFilters.city : c;
 
                     const coords = fromLonLat([longitude, latitude], 'EPSG:4326');
                     var feature = new OlFeature({
@@ -152,7 +153,8 @@ class Map extends React.Component {
                     }));
                     feature.setProperties(c);
                     feature.setProperties({
-                        nome: nome
+                        nome: nome,
+                        codigo_ibge: codigo_ibge
                     });
                     this.sourceFeatures.addFeature(feature);
                 });
@@ -193,7 +195,7 @@ class Map extends React.Component {
         }
         if (this.feature != null && this.feature.length > 0) {
             const properties = this.feature[0].getProperties();
-            this.setState({ municipio: properties.nome });
+            this.setState({ municipio: properties.nome, cod: properties.codigo_ibge });
             if (simplePopup) {
                 this.setState({ casos: properties.casos, obitos: properties.obitos });
             }
@@ -251,7 +253,7 @@ class Map extends React.Component {
                                         {this.state.obitos == 0 && this.state.casos == 0 ? <p>Não existem dados para este município.</p> : null}
                                     </div> :
                                     <div>
-                                        <Charts></Charts>
+                                        <Charts cod={ this.state.cod }></Charts>
                                     </div>
                             }
                         </div>
