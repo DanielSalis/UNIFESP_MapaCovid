@@ -116,4 +116,31 @@ router.get('/get/casesByCity', async (request, response) => {
     }
 });
 
+
+router.get('/get/casesByDate', async (request, response) => {
+    try {
+        const { codIbge } = request.query
+
+        let query = ``;
+        let result = null;
+
+        query = `SELECT to_char(data, 'mm-dd-YYYY') as dt_caso, SUM(novos) as casos, SUM(obitos_novos) as obitos
+                 FROM public.casos c 
+                 WHERE codigo_ibge = ${codIbge}
+                 GROUP BY codigo_ibge, dt_caso
+                 ORDER BY dt_caso asc
+        `;
+
+        result = await db.query(query);
+        const cases = result.rows.map(item => {
+            return item;
+        })
+
+        response.status(200).json(cases);
+
+    } catch (e) {
+        response.status(500).send(`Server Error -> ${e}`);
+    }
+});
+
 module.exports = router;
