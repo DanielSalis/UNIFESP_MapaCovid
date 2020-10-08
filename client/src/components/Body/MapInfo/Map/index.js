@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Charts from './chart'
 
 import './style.css';
 
@@ -118,7 +119,9 @@ class Map extends React.Component {
             casos: 0,
             obitos: 0,
             municipio: '',
-            showPopup: false
+            cod: 0,
+            showPopup: false,
+            simplePopup: true,
         };
     }
 
@@ -136,7 +139,7 @@ class Map extends React.Component {
                 const casos = this.props.map.filteredData;
 
                 casos.forEach((c) => {
-                    const { latitude, longitude } = (!c.codigo_ibge) ? this.state.appliedFilters.city : c;
+                    const { latitude, longitude, nome, codigo_ibge } = (!c.codigo_ibge) ? this.state.appliedFilters.city : c;
 
                     const coords = fromLonLat([longitude, latitude], 'EPSG:4326');
                     var feature = new OlFeature({
@@ -149,11 +152,15 @@ class Map extends React.Component {
                         }),
                     }));
                     feature.setProperties(c);
+                    feature.setProperties({
+                        nome: nome,
+                        codigo_ibge: codigo_ibge
+                    });
                     this.sourceFeatures.addFeature(feature);
                 });
 
                 this.map.getView().fit(this.sourceFeatures.getExtent(), this.map.getSize());
-                this.map.getView().setZoom(5);
+                //this.map.getView().setZoom(5);
             }
 
             else if (this.state.appliedFilters != this.props.map.appliedFilters) {
@@ -175,7 +182,7 @@ class Map extends React.Component {
         }
     }
 
-    showPopup = (e) => {
+    showPopup = (simplePopup) => {
         if (!this.popup) {
             this.popup = new Overlay({
                 element: this.popupDiv,
@@ -188,13 +195,13 @@ class Map extends React.Component {
         }
         if (this.feature != null && this.feature.length > 0) {
             const properties = this.feature[0].getProperties();
-            this.setState({ casos: properties.casos });
-            this.setState({ obitos: properties.obitos });
-            this.setState({ municipio: properties.nome });
+            this.setState({ municipio: properties.nome, cod: properties.codigo_ibge });
+            if (simplePopup) {
+                this.setState({ casos: properties.casos, obitos: properties.obitos });
+            }
         }
         this.popup.setPosition(this.coords);
-        this.setState({ showPopup: true });
-        this.setState({ visibleMap: false });
+        this.setState({ showPopup: true, visibleMap: false, simplePopup: simplePopup });
     }
 
     closePopup = (e) => {
@@ -227,8 +234,8 @@ class Map extends React.Component {
                                     style={{ color: '#1976D2', background: 'radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0.65) 100%)' }}
 
                                 >
-                                    <SimpleButton iconName='line-chart' shape='circle' />
-                                    <SimpleButton iconName='bullhorn' shape='circle' onClick={(e) => this.showPopup(e)} />
+                                    <SimpleButton iconName='line-chart' shape='circle' onClick={(e) => this.showPopup(false)} />
+                                    <SimpleButton iconName='bullhorn' shape='circle' onClick={(e) => this.showPopup(true)} />
                                 </CircleMenu> :
                                 null
                         }
@@ -238,9 +245,17 @@ class Map extends React.Component {
                         <a href='#' id='popup-closer' className='ol-popup-closer' onClick={(e) => this.closePopup(e)}></a>
                         <div id='popup-content'>
                             <p><label>Município: <b>{this.state.municipio}</b> </label></p>
-                            {this.state.casos != 0 ? <p><label>Número de Casos: {this.state.casos}</label></p> : null}
-                            {this.state.obitos != 0 ? <p><label>Número de Óbitos: {this.state.obitos}</label></p> : null}
-                            {this.state.obitos == 0 && this.state.casos == 0 ? <p>Não existem dados para este município.</p> : null}
+                            {
+                                (this.state.simplePopup) ?
+                                    <div>
+                                        {this.state.casos != 0 ? <p><label>Número de Casos: {this.state.casos}</label></p> : null}
+                                        {this.state.obitos != 0 ? <p><label>Número de Óbitos: {this.state.obitos}</label></p> : null}
+                                        {this.state.obitos == 0 && this.state.casos == 0 ? <p>Não existem dados para este município.</p> : null}
+                                    </div> :
+                                    <div>
+                                        <Charts cod={ this.state.cod }></Charts>
+                                    </div>
+                            }
                         </div>
                     </div>
                 </div>

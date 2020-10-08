@@ -5,7 +5,9 @@ export const Types = {
     SET_MAP: '_map/SET_MAP',
     CHANGE_LAYER: '_map/CHANGE_LAYER',
     SET_APPLIED_FILTERS: '_map/SET_APPLIED_FILTERS',
-    SET_FILTERED_DATA: '_map/SET_FILTERED_DATA'
+    SET_FILTERED_DATA: '_map/SET_FILTERED_DATA',
+    SET_SIDEBAR_OPEN: '_map/SET_SIDEBAR_OPEN',
+    SET_TITLE: '_map/SET_TITLE'
 }
 
 const INITIAL_STATE = {
@@ -23,6 +25,8 @@ const INITIAL_STATE = {
     ],
     appliedFilters: null,
     filteredData: null,
+    sidebarOpen: false,
+    title: 'Home'
 }
 
 export default function reducer(state = INITIAL_STATE, action) {
@@ -76,6 +80,18 @@ export default function reducer(state = INITIAL_STATE, action) {
                 filteredData: action.payload
             }
 
+        case Types.SET_SIDEBAR_OPEN:
+            return {
+                ...state,
+                sidebarOpen: action.payload
+            }
+
+        case Types.SET_TITLE:
+            return {
+                ...state,
+                title: action.payload
+            }
+
         default:
             return state
     }
@@ -117,6 +133,16 @@ export const Actions = {
 
     setFilteredData: (data) => ({
         type: Types.SET_FILTERED_DATA,
+        payload: data
+    }),
+
+    setSidebarOpen: (data) => ({
+        type: Types.SET_SIDEBAR_OPEN,
+        payload: data
+    }),
+
+    setTitle: (data) => ({
+        type: Types.SET_TITLE,
         payload: data
     })
 }

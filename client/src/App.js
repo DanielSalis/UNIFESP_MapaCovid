@@ -15,12 +15,14 @@ import {
 
 //Componentes e Paginas
 import Header from './components/Header';
+import RightSidebar from './components/RightSidebar';
 import NotFound from './components/NotFound';
 import Home from './pages/Home';
 
 //Redux
 import store from './store';
 import { Provider } from 'react-redux';
+import AboutUs from './pages/AboutUs';
 
 function App() {
   return (
@@ -28,8 +30,10 @@ function App() {
       <Provider store={store}>
         <Router>
           <Header />
+          <RightSidebar />
           <Switch>
             <Route exact path="/" component={Home} />
+            <Route path="/about" component={AboutUs} />
             <Route component={NotFound} />
           </Switch>
         </Router>
