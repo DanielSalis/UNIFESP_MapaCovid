@@ -5,7 +5,7 @@ import Map from './Map';
 const MapInfo = props => {
     return (
         <Container>
-            <span>Map info</span>
+            {/* <span>Map info</span> */}
             <Map props={props}></Map>
         </Container>
     );

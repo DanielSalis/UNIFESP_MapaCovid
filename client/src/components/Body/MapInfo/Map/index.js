@@ -216,7 +216,8 @@ class Map extends React.Component {
                     width: '100%',
                     height: '90%',
                     backgroundColor: '#def3f6',
-                    border: '1px solid black'
+                    border: '1px solid black',
+                    padding: '1px'
                 }}>
                     <div
                         id={this.mapDivId}
