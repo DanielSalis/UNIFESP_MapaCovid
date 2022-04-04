@@ -1,24 +1,13 @@
 # UNIFESP_MapaCovid
-Mapa interativo que busca mostar informações de inciêncidas de casos do COVID-19 no Brasil
-
-
-### 01 - Instalar dependências
-npm install
-
-### 02 - Rodar projeto
-npm start
-
-### 03 - Criação de uma feature branch
-git checkout -b <nome_da_fature> 
-
-ex: git checkout -b createHeader
-
-### 04 - Commit na feature branch
-1. git add .
-2. git push --set-upstream origin createHeader
-3. git commit -m "mensagem"
-4. git push
-
-### 05 - Após o commit é necessário criar um pull request
-
-### 06 - Caso o P.R seja aprovado, é necessário excluir a branch
+Mapa interativo que busca mostrar informações de incidências de casos do COVID-19 no Brasil
+ 
+ 
+### Sobre o projeto
+Este é o repositório antigo do projeto Mapa Covid. Aqui permanecerão registrados os commits realizados antes da divisão do projeto em API e FRONT. Além disso se encontra neste a tag que demonstra o registro do projeto no hacktoberfest.
+ 
+### Novos repositórios
+* API:
+https://github.com/DanielSalis/UNIFESP_MapaCovid_API
+ 
+* Front:
+https://github.com/DanielSalis/UNIFESP_MapaCovid_Client
